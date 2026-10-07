@@ -29,6 +29,11 @@ The same guide is inside the app: **Settings → How to use Save-oo**.
 - Pick a source (Salary, Allowance, Business, Gift, Other) and enter the amount.
 - Income is listed under **History → Income**, where it can be edited or deleted.
 
+### Search and filters
+- In **History**, type in the search box to match notes, category names or amounts (for example `trotro` or `12.50`).
+- The filter button narrows by category or an amount range. Tick **Search all months** to look beyond the current month.
+- The count and total always reflect what is shown, so you can answer "how much did I spend on X?" quickly.
+
 ### Recurring expenses
 - For rent, data bundles and subscriptions: **Settings → Recurring expenses → Add**.
 - Choose monthly or weekly and a first date. Save-oo adds the expense on every due date.

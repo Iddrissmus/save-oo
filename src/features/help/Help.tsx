@@ -100,6 +100,14 @@ const SECTIONS: Section[] = [
           Use the arrows to look at earlier months. Switch between <b>Expenses</b> and <b>Income</b> at the top.
         </li>
         <li>Tap any entry to edit or delete it.</li>
+        <li>
+          <b>Search</b> by note, category or amount (try "trotro" or "12.50"). The count and total under the search box
+          update to match, so you can see how much you spent on anything.
+        </li>
+        <li>
+          Tap the <b>filter button</b> to narrow by category or an amount range, or tick <b>Search all months</b> to look
+          beyond the current month. <b>Clear filters</b> resets everything.
+        </li>
       </ul>
     ),
   },
