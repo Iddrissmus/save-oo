@@ -1,6 +1,7 @@
-import { Download, FileUp, Moon, Plus, Sun, Trash2 } from 'lucide-react'
+import { BookOpen, ChevronRight, Download, FileUp, Moon, Plus, Sun, Trash2 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useRef, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { toast } from 'sonner'
 import CategoryBadge from '@/components/CategoryBadge'
 import { Button } from '@/components/ui/button'
@@ -19,6 +20,11 @@ export default function Settings() {
   return (
     <main className="space-y-5 p-5">
       <h1 className="text-xl font-semibold">Settings</h1>
+      <Link to="/help" className="flex items-center gap-3 rounded-2xl bg-primary/10 p-4 text-primary">
+        <BookOpen className="size-5" />
+        <span className="flex-1 font-medium">How to use Save-oo</span>
+        <ChevronRight className="size-5" />
+      </Link>
       <Profile username={settings.username} />
       <Goals budget={settings.monthlyBudget} goal={settings.savingsGoal} />
       <Categories />

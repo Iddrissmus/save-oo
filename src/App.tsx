@@ -3,6 +3,7 @@ import Layout from '@/components/Layout'
 import { useSettings } from '@/db/hooks'
 import ExpenseForm from '@/features/add/ExpenseForm'
 import IncomeForm from '@/features/add/IncomeForm'
+import Help from '@/features/help/Help'
 import History from '@/features/history/History'
 import Home from '@/features/home/Home'
 import Insights from '@/features/insights/Insights'
@@ -23,6 +24,7 @@ export default function App() {
           <Route path="/history" element={<History />} />
           <Route path="/insights" element={<Insights />} />
           <Route path="/settings" element={<Settings />} />
+          <Route path="/help" element={<Help />} />
         </Route>
         <Route path="/add" element={<ExpenseForm />} />
         <Route path="/edit/:id" element={<ExpenseForm />} />
