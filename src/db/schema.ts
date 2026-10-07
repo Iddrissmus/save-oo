@@ -48,6 +48,8 @@ export interface Settings {
   lastBackupAt?: number // ms timestamp of the last export
   weeklyDismissed?: string // start date of the last weekly recap the user closed
   noSpendDays?: string[] // days the user confirmed "nothing spent" (recent ones only)
+  pinHash?: string // PBKDF2 hash of the app-lock PIN (never the PIN itself)
+  pinSalt?: string
 }
 
 export const INCOME_SOURCES = ['Salary', 'Allowance', 'Business', 'Gift', 'Other']

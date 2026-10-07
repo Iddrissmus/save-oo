@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import { toast } from 'sonner'
 import Layout from '@/components/Layout'
@@ -14,7 +14,11 @@ import Onboarding from '@/features/onboarding/Onboarding'
 import RecurringPage from '@/features/recurring/Recurring'
 import RecurringForm from '@/features/recurring/RecurringForm'
 import Settings from '@/features/settings/Settings'
+import LockScreen from '@/features/lock/LockScreen'
+import { LockContext } from '@/features/lock/lockContext'
 import { todayISO } from '@/lib/dates'
+
+const RELOCK_AFTER_MS = 60_000 // lock again after the app has been in the background this long
 
 /** Create any recurring expenses that have come due, on launch and whenever the app is reopened. */
 function useRecurringJob(enabled: boolean) {
@@ -31,14 +35,36 @@ function useRecurringJob(enabled: boolean) {
   }, [enabled])
 }
 
+/** Re-lock when the app comes back after being hidden for a while. */
+function useRelock(enabled: boolean, lock: () => void) {
+  useEffect(() => {
+    if (!enabled) return
+    let hiddenAt = 0
+    const onChange = () => {
+      if (document.visibilityState === 'hidden') hiddenAt = Date.now()
+      else if (hiddenAt && Date.now() - hiddenAt > RELOCK_AFTER_MS) lock()
+    }
+    document.addEventListener('visibilitychange', onChange)
+    return () => document.removeEventListener('visibilitychange', onChange)
+  }, [enabled, lock])
+}
+
 export default function App() {
   const settings = useSettings()
+  const [unlocked, setUnlocked] = useState(false)
+  const hasPin = !!(settings?.pinHash && settings.pinSalt)
+  const lockApi = useMemo(() => ({ unlock: () => setUnlocked(true), lockNow: () => setUnlocked(false) }), [])
   useRecurringJob(!!settings?.onboarded)
+  useRelock(hasPin, lockApi.lockNow)
 
   if (!settings) return null // first read from IndexedDB in flight
   if (!settings.onboarded) return <Onboarding />
+  if (hasPin && !unlocked) {
+    return <LockScreen salt={settings.pinSalt!} hash={settings.pinHash!} onUnlock={lockApi.unlock} />
+  }
 
   return (
+    <LockContext.Provider value={lockApi}>
     <HashRouter>
       <Routes>
         <Route element={<Layout />}>
@@ -56,5 +82,6 @@ export default function App() {
         <Route path="/recurring/:id" element={<RecurringForm />} />
       </Routes>
     </HashRouter>
+    </LockContext.Provider>
   )
 }

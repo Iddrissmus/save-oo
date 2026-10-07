@@ -6,6 +6,7 @@ import { toast } from 'sonner'
 import CategoryBadge from '@/components/CategoryBadge'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import AppLockCard from '@/features/lock/AppLockCard'
 import { useCategories, useSettings } from '@/db/hooks'
 import { db } from '@/db/schema'
 import { saveSettings } from '@/db/repo'
@@ -36,6 +37,7 @@ export default function Settings() {
       <Profile username={settings.username} />
       <Goals budget={settings.monthlyBudget} goal={settings.savingsGoal} />
       <Categories />
+      <AppLockCard salt={settings.pinSalt} hash={settings.pinHash} />
       <Appearance />
       <Data lastBackupAt={settings.lastBackupAt} />
     </main>

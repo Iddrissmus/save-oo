@@ -202,6 +202,32 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    title: 'App lock (PIN)',
+    body: (
+      <ul className="list-disc space-y-1 pl-5">
+        <li>
+          Turn it on in <b>Settings → App lock → Set a PIN</b>. Pick 4 digits and enter them twice.
+        </li>
+        <li>The app then asks for the PIN when it opens, and again if it has been away for more than a minute.</li>
+        <li>
+          After 5 wrong tries you have to wait 30 seconds, and the wait grows with more mistakes.
+        </li>
+        <li>
+          <b>Lock now</b>, <b>Change</b> and <b>Turn off</b> are in the same place. Changing or turning off needs your
+          current PIN.
+        </li>
+        <li>
+          <b>If you forget it</b>, there is no reset. The only way in is <b>Forgot PIN?</b> on the lock screen, which
+          erases the data on this device so you can restore from a backup file. Keep your backups up to date.
+        </li>
+        <li>
+          This is a privacy screen to keep people from casually looking. It is not encryption, so it does not protect
+          against someone with technical access to your phone.
+        </li>
+      </ul>
+    ),
+  },
+  {
     title: 'Install on your phone',
     body: (
       <ul className="list-disc space-y-1 pl-5">

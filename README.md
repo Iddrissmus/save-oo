@@ -35,6 +35,12 @@ The same guide is inside the app: **Settings → How to use Save-oo**.
 - **Evening nudge:** after 5pm, if nothing is logged today, Home asks. Tap **Nothing spent today** to keep your streak.
 - There are no push notifications. A website cannot send one while the app is closed without a server, so reminders stay inside the app.
 
+### App lock (PIN)
+- **Settings → App lock → Set a PIN** (4 digits, entered twice). The app asks for it on open and after a minute in the background.
+- 5 wrong tries trigger a 30 second wait, growing with more mistakes. The PIN is stored only as a salted PBKDF2 hash.
+- **Forgot PIN?** on the lock screen erases the device's data so you can restore from a backup. There is no other reset.
+- It is a privacy screen, not encryption: it does not protect against someone with technical access to the phone.
+
 ### Search and filters
 - In **History**, type in the search box to match notes, category names or amounts (for example `trotro` or `12.50`).
 - The filter button narrows by category or an amount range. Tick **Search all months** to look beyond the current month.
