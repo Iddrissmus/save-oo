@@ -16,13 +16,25 @@ export interface Transaction {
   createdAt: number
 }
 
+export interface Income {
+  id: number
+  amount: number // pesewas
+  source: string // e.g. Salary, Allowance
+  note: string
+  date: string // YYYY-MM-DD (local date)
+  createdAt: number
+}
+
 export interface Settings {
   id: 1 // single row
   username: string
   onboarded: boolean
   monthlyBudget: number // pesewas, 0 = not set
   savingsGoal: number // pesewas, 0 = not set
+  lastBackupAt?: number // ms timestamp of the last export
 }
+
+export const INCOME_SOURCES = ['Salary', 'Allowance', 'Business', 'Gift', 'Other']
 
 export const DEFAULT_CATEGORIES: Omit<Category, 'id'>[] = [
   { name: 'Food', icon: 'food', color: 'orange' },
@@ -47,6 +59,7 @@ export const db = new Dexie('save-oo') as Dexie & {
   transactions: EntityTable<Transaction, 'id'>
   categories: EntityTable<Category, 'id'>
   settings: EntityTable<Settings, 'id'>
+  incomes: EntityTable<Income, 'id'>
 }
 
 db.version(1).stores({
@@ -73,6 +86,14 @@ db.version(2)
         delete c.emoji
       })
   })
+
+// v3: income table.
+db.version(3).stores({
+  transactions: '++id, date, categoryId',
+  categories: '++id, name',
+  settings: 'id',
+  incomes: '++id, date',
+})
 
 db.on('populate', (tx) => {
   tx.table('categories').bulkAdd(DEFAULT_CATEGORIES)

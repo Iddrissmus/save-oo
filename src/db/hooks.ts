@@ -19,6 +19,18 @@ export function useTransactions(from: string, to: string) {
   }, [from, to])
 }
 
+/** Income in [from, to], newest first. undefined while loading. */
+export function useIncomes(from: string, to: string) {
+  return useLiveQuery(async () => {
+    const rows = await db.incomes.where('date').between(from, to, true, true).toArray()
+    return rows.sort((a, b) => b.date.localeCompare(a.date) || b.createdAt - a.createdAt)
+  }, [from, to])
+}
+
+export function useIncome(id: number | undefined) {
+  return useLiveQuery(() => (id === undefined ? undefined : db.incomes.get(id)), [id])
+}
+
 export function useTransaction(id: number | undefined) {
   return useLiveQuery(() => (id === undefined ? undefined : db.transactions.get(id)), [id])
 }

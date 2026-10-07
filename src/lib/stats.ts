@@ -38,6 +38,6 @@ export function budgetStatus(budget: number, spent: number, today: string): Budg
   }
 }
 
-export function totalOf(transactions: Transaction[]): number {
+export function totalOf(transactions: { amount: number }[]): number {
   return sumPesewas(transactions.map((t) => t.amount))
 }

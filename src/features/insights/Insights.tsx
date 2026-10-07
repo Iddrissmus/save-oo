@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import CategoryBadge from '@/components/CategoryBadge'
+import InsightCard from '@/components/InsightCard'
+import { useInsights } from './useInsights'
 import MonthSwitcher from '@/components/MonthSwitcher'
 import { useCategories, useTransactions } from '@/db/hooks'
 import { CATEGORY_COLORS } from '@/lib/categoryIcons'
@@ -12,6 +14,7 @@ export default function Insights() {
   const { from, to } = monthRange(month)
   const transactions = useTransactions(from, to)
   const categories = useCategories()
+  const tips = useInsights()
 
   if (!transactions || !categories) return null
   const byId = new Map(categories.map((c) => [c.id, c]))
@@ -29,6 +32,18 @@ export default function Insights() {
     <main className="space-y-5 p-5">
       <h1 className="text-xl font-semibold">Insights</h1>
       <MonthSwitcher month={month} onChange={setMonth} />
+
+      {isCurrent && tips && tips.length > 0 && (
+        <section className="space-y-2">
+          <h2 className="font-semibold">Smart tips</h2>
+          {tips.map((tip) => (
+            <InsightCard key={tip.id} insight={tip} />
+          ))}
+          <p className="text-xs text-muted-foreground">
+            Tips are worked out on your phone from your own spending. Nothing is sent anywhere.
+          </p>
+        </section>
+      )}
 
       {transactions.length === 0 ? (
         <p className="rounded-2xl border border-dashed p-6 text-center text-sm text-muted-foreground">

@@ -6,50 +6,47 @@ import Keypad, { AmountDisplay } from '@/components/Keypad'
 import SegmentedControl from '@/components/SegmentedControl'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { CATEGORY_COLORS, CATEGORY_ICONS } from '@/lib/categoryIcons'
-import { useCategories, useTransaction } from '@/db/hooks'
-import { addTransaction, deleteTransaction, updateTransaction } from '@/db/repo'
-import type { Transaction } from '@/db/schema'
+import { useIncome } from '@/db/hooks'
+import { addIncome, deleteIncome, updateIncome } from '@/db/repo'
+import { INCOME_SOURCES, type Income } from '@/db/schema'
 import { todayISO } from '@/lib/dates'
 import { pressKey } from '@/lib/keypad'
 import { cedisToPesewas, formatCedis } from '@/lib/money'
 import { cn } from '@/lib/utils'
 
-/** Add (/add) or edit (/edit/:id) an expense. */
-export default function ExpenseForm() {
+/** Add (/add-income) or edit (/edit-income/:id) income. */
+export default function IncomeForm() {
   const { id } = useParams()
   const editId = id ? Number(id) : undefined
-  const existing = useTransaction(editId)
+  const existing = useIncome(editId)
 
-  // Wait for the row before mounting the form so initial state is correct.
   if (editId !== undefined && !existing) return null
   return <Form key={editId ?? 'new'} existing={existing} />
 }
 
-function Form({ existing }: { existing?: Transaction }) {
+function Form({ existing }: { existing?: Income }) {
   const navigate = useNavigate()
-  const categories = useCategories()
   const [amount, setAmount] = useState(existing ? (existing.amount / 100).toFixed(2) : '')
-  const [categoryId, setCategoryId] = useState<number | undefined>(existing?.categoryId)
+  const [source, setSource] = useState(existing?.source ?? '')
   const [note, setNote] = useState(existing?.note ?? '')
   const [date, setDate] = useState(existing?.date ?? todayISO())
 
   const pesewas = cedisToPesewas(amount)
-  const canSave = pesewas !== null && pesewas > 0 && categoryId !== undefined
+  const canSave = pesewas !== null && pesewas > 0 && source !== ''
 
   const save = async () => {
     if (!canSave) return
-    const data = { amount: pesewas, categoryId, note: note.trim(), date }
-    if (existing) await updateTransaction(existing.id, data)
-    else await addTransaction(data)
-    toast.success(existing ? 'Expense updated' : `Saved ${formatCedis(pesewas)}`)
+    const data = { amount: pesewas, source, note: note.trim(), date }
+    if (existing) await updateIncome(existing.id, data)
+    else await addIncome(data)
+    toast.success(existing ? 'Income updated' : `Income ${formatCedis(pesewas)} added`)
     navigate(-1)
   }
 
   const remove = async () => {
-    if (existing && confirm('Delete this expense?')) {
-      await deleteTransaction(existing.id)
-      toast('Expense deleted')
+    if (existing && confirm('Delete this income?')) {
+      await deleteIncome(existing.id)
+      toast('Income deleted')
       navigate(-1)
     }
   }
@@ -62,7 +59,7 @@ function Form({ existing }: { existing?: Transaction }) {
         </Button>
         {existing ? (
           <>
-            <h1 className="font-semibold">Edit expense</h1>
+            <h1 className="font-semibold">Edit income</h1>
             <Button variant="ghost" size="sm" className="text-destructive" onClick={remove}>
               Delete
             </Button>
@@ -71,12 +68,12 @@ function Form({ existing }: { existing?: Transaction }) {
           <>
             <div className="flex-1">
               <SegmentedControl
-                value="expense"
+                value="income"
                 options={[
                   { value: 'expense', label: 'Expense' },
                   { value: 'income', label: 'Income' },
                 ]}
-                onChange={(v) => v === 'income' && navigate('/add-income', { replace: true })}
+                onChange={(v) => v === 'expense' && navigate('/add', { replace: true })}
               />
             </div>
             <span className="w-9" />
@@ -84,32 +81,22 @@ function Form({ existing }: { existing?: Transaction }) {
         )}
       </header>
 
-      <AmountDisplay amount={amount} />
+      <AmountDisplay amount={amount} label="Money received" />
 
-      <section>
-        <div className="grid grid-cols-4 gap-2">
-          {categories?.map((c) => {
-            const Icon = CATEGORY_ICONS[c.icon] ?? CATEGORY_ICONS.other
-            const color = CATEGORY_COLORS[c.color] ?? CATEGORY_COLORS.slate
-            const selected = categoryId === c.id
-            return (
-              <button
-                key={c.id}
-                type="button"
-                onClick={() => setCategoryId(c.id)}
-                className={cn(
-                  'flex flex-col items-center gap-1 rounded-2xl border-2 p-2 text-xs transition-colors',
-                  selected ? 'border-primary bg-primary/5 font-medium' : 'border-transparent bg-card',
-                )}
-              >
-                <span className={cn('flex size-9 items-center justify-center rounded-full', color.chip)}>
-                  <Icon className="size-4" />
-                </span>
-                <span className="w-full truncate text-center">{c.name}</span>
-              </button>
-            )
-          })}
-        </div>
+      <section className="flex flex-wrap justify-center gap-2">
+        {INCOME_SOURCES.map((s) => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => setSource(s)}
+            className={cn(
+              'rounded-full border-2 px-4 py-2 text-sm',
+              source === s ? 'border-primary bg-primary/5 font-medium' : 'border-transparent bg-card',
+            )}
+          >
+            {s}
+          </button>
+        ))}
       </section>
 
       <div className="grid grid-cols-2 gap-2">
@@ -132,7 +119,7 @@ function Form({ existing }: { existing?: Transaction }) {
       <div className="mt-auto space-y-3">
         <Keypad onPress={(k) => setAmount((a) => pressKey(a, k))} />
         <Button onClick={save} disabled={!canSave} size="lg" className="h-12 w-full rounded-2xl text-base">
-          {existing ? 'Save changes' : 'Save expense'}
+          {existing ? 'Save changes' : 'Save income'}
         </Button>
       </div>
     </main>

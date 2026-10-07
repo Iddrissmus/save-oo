@@ -23,7 +23,7 @@ export default function Settings() {
       <Goals budget={settings.monthlyBudget} goal={settings.savingsGoal} />
       <Categories />
       <Appearance />
-      <Data />
+      <Data lastBackupAt={settings.lastBackupAt} />
     </main>
   )
 }
@@ -181,7 +181,7 @@ function Appearance() {
   )
 }
 
-function Data() {
+function Data({ lastBackupAt }: { lastBackupAt?: number }) {
   const fileRef = useRef<HTMLInputElement>(null)
 
   const onFile = async (file?: File) => {
@@ -200,6 +200,9 @@ function Data() {
     <Card title="Your data">
       <p className="text-sm text-muted-foreground">
         Everything is stored only on this device. Export a backup now and then so you never lose it.
+      </p>
+      <p className="text-sm font-medium">
+        {lastBackupAt ? `Last backup: ${new Date(lastBackupAt).toLocaleDateString('en-GH', { day: 'numeric', month: 'short', year: 'numeric' })}` : 'No backup yet'}
       </p>
       <div className="grid grid-cols-2 gap-2">
         <Button variant="outline" onClick={exportJSON}>

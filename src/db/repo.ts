@@ -1,4 +1,4 @@
-import { db, DEFAULT_SETTINGS, type Settings, type Transaction } from './schema'
+import { db, DEFAULT_SETTINGS, type Income, type Settings, type Transaction } from './schema'
 
 export type NewTransaction = Omit<Transaction, 'id' | 'createdAt'>
 
@@ -17,6 +17,20 @@ export function deleteTransaction(id: number) {
 /** Transactions with date in [from, to] inclusive (YYYY-MM-DD), newest first. */
 export function listTransactions(from: string, to: string) {
   return db.transactions.where('date').between(from, to, true, true).reverse().sortBy('date')
+}
+
+export type NewIncome = Omit<Income, 'id' | 'createdAt'>
+
+export function addIncome(i: NewIncome) {
+  return db.incomes.add({ ...i, createdAt: Date.now() } as Income)
+}
+
+export function updateIncome(id: number, changes: Partial<NewIncome>) {
+  return db.incomes.update(id, changes)
+}
+
+export function deleteIncome(id: number) {
+  return db.incomes.delete(id)
 }
 
 export function listCategories() {

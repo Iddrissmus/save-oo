@@ -1,12 +1,13 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
 import Layout from '@/components/Layout'
-import { useSettings } from './db/hooks'
-import ExpenseForm from './features/add/ExpenseForm'
-import History from './features/history/History'
-import Home from './features/home/Home'
-import Insights from './features/insights/Insights'
-import Onboarding from './features/onboarding/Onboarding'
-import Settings from './features/settings/Settings'
+import { useSettings } from '@/db/hooks'
+import ExpenseForm from '@/features/add/ExpenseForm'
+import IncomeForm from '@/features/add/IncomeForm'
+import History from '@/features/history/History'
+import Home from '@/features/home/Home'
+import Insights from '@/features/insights/Insights'
+import Onboarding from '@/features/onboarding/Onboarding'
+import Settings from '@/features/settings/Settings'
 
 export default function App() {
   const settings = useSettings()
@@ -25,6 +26,8 @@ export default function App() {
         </Route>
         <Route path="/add" element={<ExpenseForm />} />
         <Route path="/edit/:id" element={<ExpenseForm />} />
+        <Route path="/add-income" element={<IncomeForm />} />
+        <Route path="/edit-income/:id" element={<IncomeForm />} />
       </Routes>
     </HashRouter>
   )

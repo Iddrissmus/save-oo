@@ -43,6 +43,11 @@ export function eachDay(from: string, to: string): string[] {
   return days
 }
 
+/** Whole days since a ms timestamp; Infinity if there is none. */
+export function daysSince(ms: number | undefined): number {
+  return ms ? Math.floor((Date.now() - ms) / 86_400_000) : Infinity
+}
+
 export function formatDay(iso: string): string {
   const today = new Date()
   const yesterday = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1)
