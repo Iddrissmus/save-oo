@@ -29,6 +29,14 @@ The same guide is inside the app: **Settings → How to use Save-oo**.
 - Pick a source (Salary, Allowance, Business, Gift, Other) and enter the amount.
 - Income is listed under **History → Income**, where it can be edited or deleted.
 
+### Recurring expenses
+- For rent, data bundles and subscriptions: **Settings → Recurring expenses → Add**.
+- Choose monthly or weekly and a first date. Save-oo adds the expense on every due date.
+- If the app was closed on a due date, the missed ones are added next time you open it.
+- Day 31 falls on the last day of shorter months.
+- **Pause** stops it without back-filling on resume. **Delete** stops it for good, and expenses it already created stay in History (marked with a repeat icon).
+- A first date in the past adds the missed ones immediately.
+
 ### Screens
 | Screen | What it does |
 |---|---|

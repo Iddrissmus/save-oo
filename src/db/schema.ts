@@ -1,4 +1,5 @@
 import Dexie, { type EntityTable } from 'dexie'
+import type { Frequency } from '@/lib/recurring'
 
 export interface Category {
   id: number
@@ -13,6 +14,19 @@ export interface Transaction {
   categoryId: number
   note: string
   date: string // YYYY-MM-DD (local date)
+  createdAt: number
+  recurringId?: number // set when generated from a recurring item
+}
+
+export interface Recurring {
+  id: number
+  amount: number // pesewas
+  categoryId: number
+  note: string
+  frequency: Frequency
+  dayOfMonth: number // used by monthly items
+  nextDue: string // next date an expense will be created
+  active: boolean
   createdAt: number
 }
 
@@ -60,6 +74,7 @@ export const db = new Dexie('save-oo') as Dexie & {
   categories: EntityTable<Category, 'id'>
   settings: EntityTable<Settings, 'id'>
   incomes: EntityTable<Income, 'id'>
+  recurring: EntityTable<Recurring, 'id'>
 }
 
 db.version(1).stores({
@@ -93,6 +108,15 @@ db.version(3).stores({
   categories: '++id, name',
   settings: 'id',
   incomes: '++id, date',
+})
+
+// v4: recurring expenses.
+db.version(4).stores({
+  transactions: '++id, date, categoryId',
+  categories: '++id, name',
+  settings: 'id',
+  incomes: '++id, date',
+  recurring: '++id, nextDue, categoryId',
 })
 
 db.on('populate', (tx) => {

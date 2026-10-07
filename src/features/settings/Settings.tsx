@@ -1,4 +1,4 @@
-import { BookOpen, ChevronRight, Download, FileUp, Moon, Plus, Sun, Trash2 } from 'lucide-react'
+import { BookOpen, ChevronRight, Download, FileUp, Moon, Plus, Repeat, Sun, Trash2 } from 'lucide-react'
 import { useTheme } from 'next-themes'
 import { useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
@@ -24,6 +24,14 @@ export default function Settings() {
         <BookOpen className="size-5" />
         <span className="flex-1 font-medium">How to use Save-oo</span>
         <ChevronRight className="size-5" />
+      </Link>
+      <Link to="/recurring" className="flex items-center gap-3 rounded-2xl bg-card p-4 shadow-sm">
+        <Repeat className="size-5 text-primary" />
+        <span className="flex-1">
+          <span className="block font-medium">Recurring expenses</span>
+          <span className="block text-sm text-muted-foreground">Rent, bundles, subscriptions</span>
+        </span>
+        <ChevronRight className="size-5 text-muted-foreground" />
       </Link>
       <Profile username={settings.username} />
       <Goals budget={settings.monthlyBudget} goal={settings.savingsGoal} />
@@ -108,8 +116,10 @@ function Categories() {
   }
 
   const remove = async (id: number) => {
-    const used = await db.transactions.where('categoryId').equals(id).count()
-    if (used > 0) return toast.error(`${used} expenses use this category, so it can't be deleted.`)
+    const used =
+      (await db.transactions.where('categoryId').equals(id).count()) +
+      (await db.recurring.where('categoryId').equals(id).count())
+    if (used > 0) return toast.error(`${used} expenses or recurring items use this category, so it can't be deleted.`)
     await db.categories.delete(id)
   }
 

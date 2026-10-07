@@ -1,4 +1,4 @@
-import { db, type Category, type Income, type Settings, type Transaction } from '@/db/schema'
+import { db, type Category, type Income, type Recurring, type Settings, type Transaction } from '@/db/schema'
 import { saveSettings } from '@/db/repo'
 
 interface BackupFile {
@@ -9,6 +9,7 @@ interface BackupFile {
   categories: Category[]
   transactions: Transaction[]
   incomes?: Income[] // absent in backups made before income existed
+  recurring?: Recurring[] // absent in older backups
 }
 
 function download(filename: string, text: string, type: string) {
@@ -32,6 +33,7 @@ export async function exportJSON() {
     categories: await db.categories.toArray(),
     transactions: await db.transactions.toArray(),
     incomes: await db.incomes.toArray(),
+    recurring: await db.recurring.toArray(),
   }
   download(`save-oo-backup-${stamp()}.json`, JSON.stringify(file, null, 2), 'application/json')
   await saveSettings({ lastBackupAt: now })
@@ -63,15 +65,19 @@ export async function importJSON(text: string) {
     throw new Error('This is not a Save-oo backup file.')
   }
   const incomes = file.incomes ?? []
-  if (!file.transactions.every((t) => validAmount(t.amount) && validDate(t.date)) || !incomes.every((i) => validAmount(i.amount) && validDate(i.date))) {
+  const recurring = file.recurring ?? []
+  const ok = (rows: { amount: number; date?: string; nextDue?: string }[]) =>
+    rows.every((r) => validAmount(r.amount) && validDate(r.date ?? r.nextDue))
+  if (!ok(file.transactions) || !ok(incomes) || !ok(recurring)) {
     throw new Error('The backup contains invalid entries.')
   }
 
-  await db.transaction('rw', [db.transactions, db.categories, db.settings, db.incomes], async () => {
-    await Promise.all([db.transactions.clear(), db.categories.clear(), db.settings.clear(), db.incomes.clear()])
+  await db.transaction('rw', [db.transactions, db.categories, db.settings, db.incomes, db.recurring], async () => {
+    await Promise.all([db.transactions.clear(), db.categories.clear(), db.settings.clear(), db.incomes.clear(), db.recurring.clear()])
     await db.categories.bulkAdd(file.categories!)
     await db.transactions.bulkAdd(file.transactions!)
     await db.incomes.bulkAdd(incomes)
+    await db.recurring.bulkAdd(recurring)
     await db.settings.add({ ...file.settings!, id: 1 })
   })
 }

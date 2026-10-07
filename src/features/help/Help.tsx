@@ -53,6 +53,25 @@ const SECTIONS: Section[] = [
     ),
   },
   {
+    title: 'Recurring expenses',
+    body: (
+      <ul className="list-disc space-y-1 pl-5">
+        <li>
+          For things you pay on a schedule (rent, data bundles, subscriptions), open{' '}
+          <b>Settings → Recurring expenses</b> and add them once.
+        </li>
+        <li>Choose monthly or weekly and the first date. Save-oo then adds the expense for you on each due date.</li>
+        <li>If you do not open the app for a while, the missed ones are added the next time you do.</li>
+        <li>A day like the 31st falls on the last day of shorter months.</li>
+        <li>
+          Use <b>Pause</b> for a break (nothing is back-filled when you resume), or <b>Delete</b> to stop it. Expenses
+          already created stay in your history, marked with a small repeat icon.
+        </li>
+        <li>Picking a first date in the past adds the missed ones straight away.</li>
+      </ul>
+    ),
+  },
+  {
     title: 'The Home screen',
     body: (
       <ul className="list-disc space-y-1 pl-5">

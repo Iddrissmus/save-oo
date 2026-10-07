@@ -31,6 +31,14 @@ export function useIncome(id: number | undefined) {
   return useLiveQuery(() => (id === undefined ? undefined : db.incomes.get(id)), [id])
 }
 
+export function useRecurringList() {
+  return useLiveQuery(() => db.recurring.orderBy('nextDue').toArray())
+}
+
+export function useRecurringItem(id: number | undefined) {
+  return useLiveQuery(() => (id === undefined ? undefined : db.recurring.get(id)), [id])
+}
+
 export function useTransaction(id: number | undefined) {
   return useLiveQuery(() => (id === undefined ? undefined : db.transactions.get(id)), [id])
 }
