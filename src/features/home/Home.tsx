@@ -1,10 +1,13 @@
-import { HardDriveDownload, TrendingUp } from 'lucide-react'
+import { BellRing, Flame, HardDriveDownload, TrendingUp } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import InsightCard from '@/components/InsightCard'
 import TransactionRow from '@/components/TransactionRow'
+import { Button, buttonVariants } from '@/components/ui/button'
 import { Progress } from '@/components/ui/progress'
 import { useCategories, useIncomes, useSettings, useTransactions } from '@/db/hooks'
 import { useInsights } from '@/features/insights/useInsights'
+import { useHabit } from './useHabit'
+import WeeklyRecap from './WeeklyRecap'
 import { daysSince, formatMonth, monthRange, todayISO } from '@/lib/dates'
 import { formatCedis } from '@/lib/money'
 import { budgetStatus, totalOf } from '@/lib/stats'
@@ -18,6 +21,7 @@ export default function Home() {
   const incomes = useIncomes(from, to)
   const categories = useCategories()
   const insights = useInsights()
+  const habit = useHabit()
 
   if (!settings || !transactions || !incomes || !categories) return null
   const byId = new Map(categories.map((c) => [c.id, c]))
@@ -34,10 +38,39 @@ export default function Home() {
 
   return (
     <main className="space-y-6 p-5">
-      <header>
-        <p className="text-sm text-muted-foreground">Hi, {settings.username} 👋</p>
-        <h1 className="text-xl font-semibold">Your money this month</h1>
+      <header className="flex items-start justify-between gap-3">
+        <div>
+          <p className="text-sm text-muted-foreground">Hi, {settings.username} 👋</p>
+          <h1 className="text-xl font-semibold">Your money this month</h1>
+        </div>
+        {habit && habit.streak > 0 && (
+          <span
+            className="flex shrink-0 items-center gap-1 rounded-full bg-orange-100 px-3 py-1 text-sm font-medium text-orange-700 dark:bg-orange-500/20 dark:text-orange-300"
+            title="Days in a row you logged your spending"
+          >
+            <Flame className="size-4" /> {habit.streak}
+          </span>
+        )}
       </header>
+
+      {habit?.showNudge && (
+        <section className="space-y-3 rounded-2xl bg-sky-50 p-4 text-sm text-sky-900 dark:bg-sky-500/10 dark:text-sky-200">
+          <p className="flex items-center gap-2 font-semibold">
+            <BellRing className="size-5" /> Nothing logged today yet
+          </p>
+          <p>
+            Did you spend anything today? {habit.streak > 0 && `Log it to keep your ${habit.streak}-day streak going.`}
+          </p>
+          <div className="flex gap-2">
+            <Link to="/add" className={buttonVariants({ className: 'h-9 flex-1' })}>
+              Add expense
+            </Link>
+            <Button variant="outline" className="h-9 flex-1" onClick={habit.markNoSpend}>
+              Nothing spent today
+            </Button>
+          </div>
+        </section>
+      )}
 
       {needsBackup && (
         <Link
@@ -115,6 +148,8 @@ export default function Home() {
           </p>
         )}
       </section>
+
+      <WeeklyRecap />
 
       {topTip && (
         <section className="space-y-2">

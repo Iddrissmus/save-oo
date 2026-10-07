@@ -88,6 +88,16 @@ const SECTIONS: Section[] = [
         <li>
           <b>For you</b> shows your most important tip. Open Insights for the rest.
         </li>
+        <li>
+          <b>Last week</b> is a recap of the previous Monday to Sunday: the total, how it compares with the week before,
+          your biggest category and day, and how many days you spent nothing. Close it with the X, and a new one
+          appears each week.
+        </li>
+        <li>
+          The <b>flame number</b> is your streak: days in a row you logged something. After 5pm, if you have not logged
+          today, Home asks you. Tap <b>Nothing spent today</b> if that is true, and the streak continues. Recurring
+          expenses do not count toward the streak, since they add themselves.
+        </li>
       </ul>
     ),
   },

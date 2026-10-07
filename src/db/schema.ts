@@ -46,6 +46,8 @@ export interface Settings {
   monthlyBudget: number // pesewas, 0 = not set
   savingsGoal: number // pesewas, 0 = not set
   lastBackupAt?: number // ms timestamp of the last export
+  weeklyDismissed?: string // start date of the last weekly recap the user closed
+  noSpendDays?: string[] // days the user confirmed "nothing spent" (recent ones only)
 }
 
 export const INCOME_SOURCES = ['Salary', 'Allowance', 'Business', 'Gift', 'Other']

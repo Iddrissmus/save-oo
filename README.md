@@ -29,6 +29,12 @@ The same guide is inside the app: **Settings → How to use Save-oo**.
 - Pick a source (Salary, Allowance, Business, Gift, Other) and enter the amount.
 - Income is listed under **History → Income**, where it can be edited or deleted.
 
+### Habit helpers
+- **Weekly recap:** a card on Home summarising last Monday to Sunday (total, change vs the week before, top category, biggest day, no-spend days). Dismiss it and a fresh one appears next week.
+- **Streak:** the flame on Home counts days in a row you logged something. Recurring expenses do not count.
+- **Evening nudge:** after 5pm, if nothing is logged today, Home asks. Tap **Nothing spent today** to keep your streak.
+- There are no push notifications. A website cannot send one while the app is closed without a server, so reminders stay inside the app.
+
 ### Search and filters
 - In **History**, type in the search box to match notes, category names or amounts (for example `trotro` or `12.50`).
 - The filter button narrows by category or an amount range. Tick **Search all months** to look beyond the current month.

@@ -43,6 +43,21 @@ export function eachDay(from: string, to: string): string[] {
   return days
 }
 
+export function addDays(iso: string, n: number): string {
+  const d = fromISO(iso)
+  return toISO(new Date(d.getFullYear(), d.getMonth(), d.getDate() + n))
+}
+
+/** Monday of the week containing `iso`. */
+export function startOfWeek(iso: string): string {
+  const day = fromISO(iso).getDay() // 0 = Sunday
+  return addDays(iso, -((day + 6) % 7))
+}
+
+export function currentHour(): number {
+  return new Date().getHours()
+}
+
 /** Whole days since a ms timestamp; Infinity if there is none. */
 export function daysSince(ms: number | undefined): number {
   return ms ? Math.floor((Date.now() - ms) / 86_400_000) : Infinity
