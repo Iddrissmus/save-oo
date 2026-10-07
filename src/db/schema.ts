@@ -3,7 +3,8 @@ import Dexie, { type EntityTable } from 'dexie'
 export interface Category {
   id: number
   name: string
-  emoji: string
+  icon: string // key into CATEGORY_ICONS (src/lib/categoryIcons.ts)
+  color: string // key into CATEGORY_COLORS
 }
 
 export interface Transaction {
@@ -24,14 +25,14 @@ export interface Settings {
 }
 
 export const DEFAULT_CATEGORIES: Omit<Category, 'id'>[] = [
-  { name: 'Food', emoji: '🍲' },
-  { name: 'Transport', emoji: '🚌' },
-  { name: 'Airtime/Data', emoji: '📱' },
-  { name: 'Bills', emoji: '💡' },
-  { name: 'Rent', emoji: '🏠' },
-  { name: 'Health', emoji: '💊' },
-  { name: 'Savings', emoji: '🐷' },
-  { name: 'Other', emoji: '🧾' },
+  { name: 'Food', icon: 'food', color: 'orange' },
+  { name: 'Transport', icon: 'transport', color: 'blue' },
+  { name: 'Airtime/Data', icon: 'phone', color: 'violet' },
+  { name: 'Bills', icon: 'bills', color: 'amber' },
+  { name: 'Rent', icon: 'home', color: 'rose' },
+  { name: 'Health', icon: 'health', color: 'red' },
+  { name: 'Savings', icon: 'savings', color: 'emerald' },
+  { name: 'Other', icon: 'other', color: 'slate' },
 ]
 
 export const DEFAULT_SETTINGS: Settings = {
@@ -53,6 +54,25 @@ db.version(1).stores({
   categories: '++id, name',
   settings: 'id',
 })
+
+// v2: emoji -> icon + color. Same indexes; only the row shape changes.
+db.version(2)
+  .stores({
+    transactions: '++id, date, categoryId',
+    categories: '++id, name',
+    settings: 'id',
+  })
+  .upgrade(async (tx) => {
+    await tx
+      .table('categories')
+      .toCollection()
+      .modify((c: Category & { emoji?: string }) => {
+        const match = DEFAULT_CATEGORIES.find((d) => d.name === c.name)
+        c.icon = match?.icon ?? 'other'
+        c.color = match?.color ?? 'slate'
+        delete c.emoji
+      })
+  })
 
 db.on('populate', (tx) => {
   tx.table('categories').bulkAdd(DEFAULT_CATEGORIES)

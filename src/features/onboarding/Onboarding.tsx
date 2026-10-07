@@ -1,21 +1,25 @@
+import { LineChart, PiggyBank, PenLine, Wallet, type LucideIcon } from 'lucide-react'
 import { useState } from 'react'
-import { saveSettings } from '../../db/repo'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { saveSettings } from '@/db/repo'
+import { cn } from '@/lib/utils'
 
-const INTRO = [
+const INTRO: { Icon: LucideIcon; title: string; body: string }[] = [
   {
-    emoji: '✍️',
+    Icon: PenLine,
     title: 'Log every spend',
     body: 'Add what you spend in seconds, down to the last pesewa. Small spends add up, so nothing gets left out.',
   },
   {
-    emoji: '🔍',
+    Icon: LineChart,
     title: 'See where it goes',
     body: 'Get a clear view of your spending by day and by category, so you know exactly where your money disappears.',
   },
   {
-    emoji: '🐷',
+    Icon: PiggyBank,
     title: 'Save with a plan',
-    body: 'Set a monthly budget and a savings goal, and always know how much you have left to spend.',
+    body: 'Set a monthly budget and a savings goal, and always know how much you have left to spend each day.',
   },
 ]
 
@@ -24,14 +28,17 @@ export default function Onboarding() {
   const [name, setName] = useState('')
   const trimmed = name.trim()
 
-  const finish = (username: string) => saveSettings({ username, onboarded: true })
+  const finish = () => saveSettings({ username: trimmed, onboarded: true })
 
   if (step === 0) {
     return (
-      <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-6 p-6">
-        <div>
-          <h1 className="text-3xl font-semibold text-teal-700">Save-oo</h1>
-          <p className="mt-2 text-slate-600">Know where every pesewa goes.</p>
+      <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-center gap-8 p-6">
+        <div className="space-y-3">
+          <span className="flex size-14 items-center justify-center rounded-2xl bg-primary text-primary-foreground">
+            <Wallet className="size-7" />
+          </span>
+          <h1 className="text-3xl font-semibold">Save-oo</h1>
+          <p className="text-muted-foreground">Know where every pesewa goes.</p>
         </div>
         <form
           className="flex flex-col gap-4"
@@ -42,42 +49,40 @@ export default function Onboarding() {
         >
           <label className="flex flex-col gap-2">
             <span className="font-medium">What should we call you?</span>
-            <input
+            <Input
               autoFocus
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={30}
               placeholder="Your name"
-              className="rounded-xl border border-slate-300 px-4 py-3 text-lg outline-none focus:border-teal-600 focus:ring-2 focus:ring-teal-600/20"
+              className="h-12 bg-card text-lg"
             />
           </label>
-          <button
-            type="submit"
-            disabled={!trimmed}
-            className="rounded-xl bg-teal-700 px-4 py-3 font-medium text-white disabled:opacity-40"
-          >
+          <Button type="submit" disabled={!trimmed} size="lg" className="h-12 rounded-2xl text-base">
             Continue
-          </button>
+          </Button>
         </form>
       </main>
     )
   }
 
-  const card = INTRO[step - 1]
+  const { Icon, title, body } = INTRO[step - 1]
   const isLast = step === INTRO.length
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col justify-between p-6">
       <div className="flex justify-end">
-        <button onClick={() => finish(trimmed)} className="text-sm text-slate-500">
+        <Button variant="ghost" size="sm" onClick={finish} className="text-muted-foreground">
           Skip
-        </button>
+        </Button>
       </div>
 
-      <section className="flex flex-col items-center gap-4 text-center">
-        <div className="text-7xl">{card.emoji}</div>
-        <h2 className="text-2xl font-semibold">{card.title}</h2>
-        <p className="text-slate-600">{card.body}</p>
+      <section className="flex flex-col items-center gap-5 text-center">
+        <span className="flex size-28 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <Icon className="size-14" />
+        </span>
+        <h2 className="text-2xl font-semibold">{title}</h2>
+        <p className="text-muted-foreground">{body}</p>
       </section>
 
       <div className="flex flex-col gap-6">
@@ -85,16 +90,17 @@ export default function Onboarding() {
           {INTRO.map((_, i) => (
             <span
               key={i}
-              className={`h-2 w-2 rounded-full ${i === step - 1 ? 'bg-teal-700' : 'bg-slate-300'}`}
+              className={cn('h-2 rounded-full transition-all', i === step - 1 ? 'w-6 bg-primary' : 'w-2 bg-muted-foreground/30')}
             />
           ))}
         </div>
-        <button
-          onClick={() => (isLast ? finish(trimmed) : setStep(step + 1))}
-          className="rounded-xl bg-teal-700 px-4 py-3 font-medium text-white"
+        <Button
+          size="lg"
+          className="h-12 rounded-2xl text-base"
+          onClick={() => (isLast ? finish() : setStep(step + 1))}
         >
           {isLast ? `Let's go, ${trimmed}` : 'Next'}
-        </button>
+        </Button>
       </div>
     </main>
   )

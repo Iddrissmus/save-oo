@@ -1,15 +1,12 @@
 import { HashRouter, Route, Routes } from 'react-router-dom'
+import Layout from '@/components/Layout'
 import { useSettings } from './db/hooks'
+import ExpenseForm from './features/add/ExpenseForm'
+import History from './features/history/History'
+import Home from './features/home/Home'
+import Insights from './features/insights/Insights'
 import Onboarding from './features/onboarding/Onboarding'
-
-function Home({ username }: { username: string }) {
-  return (
-    <main className="mx-auto max-w-md p-6">
-      <h1 className="text-2xl font-semibold text-teal-700">Hi, {username}</h1>
-      <p className="mt-2 text-slate-600">Track every pesewa you spend.</p>
-    </main>
-  )
-}
+import Settings from './features/settings/Settings'
 
 export default function App() {
   const settings = useSettings()
@@ -20,7 +17,14 @@ export default function App() {
   return (
     <HashRouter>
       <Routes>
-        <Route path="/" element={<Home username={settings.username} />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/history" element={<History />} />
+          <Route path="/insights" element={<Insights />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
+        <Route path="/add" element={<ExpenseForm />} />
+        <Route path="/edit/:id" element={<ExpenseForm />} />
       </Routes>
     </HashRouter>
   )
